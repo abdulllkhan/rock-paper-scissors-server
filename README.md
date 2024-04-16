@@ -1,33 +1,43 @@
 commands to install mysql:
 
 Installation command:
-brew install mysql
+
+`brew install mysql`
 
 Check if mysql is listed:
-brew services list 
+
+`brew services list`
 
 Start mysql:
-brew services start mysql
+
+`brew services start mysql`
 
 Stop mysql:
-brew services stop mysql
+
+`brew services stop mysql`
 
 Start mysql in safe mode:
-sudo mysqld_safe --skip-grant-tables --skip-networking &
+
+`sudo mysqld_safe --skip-grant-tables --skip-networking &`
 
 Access mysql:
-mysql -u root
+
+`mysql -u root`
 
 Set new password:
-USE mysql;
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'new_password';
-FLUSH PRIVILEGES;
+
+`USE mysql;`
+
+`ALTER USER 'root'@'localhost' IDENTIFIED BY 'new_password';`
+
+`FLUSH PRIVILEGES;`
 
 Stop safe mode and exit:
-mysqladmin -u root -p shutdown
+
+`mysqladmin -u root -p shutdown`
 
 Restart:
-brew services start mysql
+`brew services start mysql`
 
 Login using the following command:
-mysql -u root -p
+`mysql -u root -p`
