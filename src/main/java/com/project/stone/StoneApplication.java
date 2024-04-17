@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.project.stone", "com.project.stone.hello"})
+@ComponentScan(basePackages = {"com.project.stone", "com.project.stone.hello", "com.project.stone.user"})
 public class StoneApplication {
 
 	public static void main(String[] args) {
