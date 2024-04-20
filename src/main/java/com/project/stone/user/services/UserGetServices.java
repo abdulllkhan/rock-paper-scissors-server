@@ -7,6 +7,8 @@ import com.project.stone.user.exception.UserException;
 @Service
 public interface UserGetServices {
     
-    public String getUserDetails(String userId) throws Exception;
+    public String getUserDetails(Integer userId) throws Exception;
+
+    public String getUserByIdAsJson(Integer userId) throws UserException;
 
 }
