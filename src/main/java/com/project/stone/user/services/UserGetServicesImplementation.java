@@ -50,14 +50,15 @@ public class UserGetServicesImplementation implements UserGetServices{
     public String getUserByIdAsJson(Integer userId) throws UserException {
         User user = null;
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT id, email, created_at FROM users WHERE id = ?")) {
+             PreparedStatement statement = connection.prepareStatement("SELECT id, username,created_at FROM users WHERE id = ?")) {
 
             statement.setInt(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     user = new User();
                     user.setId(resultSet.getInt("id"));
-                    user.setEmail(resultSet.getString("email"));
+                    // user.setEmail(resultSet.getString("email"));
+                    user.setUsername(resultSet.getString("username"));
                     user.setCreatedAt(resultSet.getLong("created_at"));
                 }
             }
@@ -68,6 +69,30 @@ public class UserGetServicesImplementation implements UserGetServices{
 
         Gson gson = new GsonBuilder().create();
         return gson.toJson(user);
+    }
+
+    @Override
+    public User getUserObjectByUsername(String username) throws UserException {
+        User user = null;
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT id, username, created_at FROM users WHERE username = ?")) {
+
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    user = new User();
+                    user.setId(resultSet.getInt("id"));
+                    // user.setEmail(resultSet.getString("email"));
+                    user.setUsername(resultSet.getString("username"));
+                    user.setCreatedAt(resultSet.getLong("created_at"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exceptions
+        }
+
+        return user;
     }
 
     
