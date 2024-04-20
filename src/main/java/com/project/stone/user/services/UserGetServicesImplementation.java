@@ -72,10 +72,10 @@ public class UserGetServicesImplementation implements UserGetServices{
     }
 
     @Override
-    public User getUserObjectByUsername(String username) throws UserException {
+    public User getUserObjectByUsernameForInternal(String username) throws UserException {
         User user = null;
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT id, username, created_at FROM users WHERE username = ?")) {
+             PreparedStatement statement = connection.prepareStatement("SELECT id, username, password, created_at FROM users WHERE username = ?")) {
 
             statement.setString(1, username);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -83,6 +83,7 @@ public class UserGetServicesImplementation implements UserGetServices{
                     user = new User();
                     user.setId(resultSet.getInt("id"));
                     // user.setEmail(resultSet.getString("email"));
+                    user.setPassword(resultSet.getString("password"));
                     user.setUsername(resultSet.getString("username"));
                     user.setCreatedAt(resultSet.getLong("created_at"));
                 }

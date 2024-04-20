@@ -12,6 +12,6 @@ public interface UserGetServices {
 
     public String getUserByIdAsJson(Integer userId) throws UserException;
 
-    public User getUserObjectByUsername(String username) throws UserException;
+    public User getUserObjectByUsernameForInternal(String username) throws UserException;
 
 }

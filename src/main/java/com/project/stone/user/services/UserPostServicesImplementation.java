@@ -40,8 +40,6 @@ public class UserPostServicesImplementation implements UserPostServices{
     @Override
     public String createUser(@Valid CreateUserDTO createUserDTO) throws Exception {
 
-        Integer id = null;
-
         try{
             Optional.ofNullable(createUserDTO).orElseThrow(() -> new Exception("User cannot be null"));
         }catch(Exception e){
@@ -57,7 +55,7 @@ public class UserPostServicesImplementation implements UserPostServices{
         }
 
         User user = new User(); 
-        user = userGetServices.getUserObjectByUsername(createUserDTO.getUsername());
+        user = userGetServices.getUserObjectByUsernameForInternal(createUserDTO.getUsername());
 
         if(user != null){
             return gson.toJson("User already exists, please use a diffrent username");
@@ -82,10 +80,44 @@ public class UserPostServicesImplementation implements UserPostServices{
             e.printStackTrace();
         }
 
-        user = userGetServices.getUserObjectByUsername(createUserDTO.getUsername());
+        user = userGetServices.getUserObjectByUsernameForInternal(createUserDTO.getUsername());
 
         return gson.toJson(new SuccessfulUserCreationMessage(user.getId(), "User created successfully"));
         // return createUserDTO.getUsername();
+
+    }
+
+
+    @Override
+    public String userLogin(CreateUserDTO loginUserDTO) throws Exception {
+
+        try{
+            Optional.ofNullable(loginUserDTO).orElseThrow(() -> new Exception("User cannot be null"));
+        }catch(Exception e){
+            // throw new Exception("User cannot be null");
+            return gson.toJson(e.getMessage());
+        }
+        try{
+            if(loginUserDTO.getUsername().isBlank() || loginUserDTO.getPassword().isBlank()){
+                throw new Exception("Username or password cannot be blank");
+            }
+        } catch (Exception e){
+            return gson.toJson(e.getMessage());
+            // throw new UserException(e.getMessage()); // work on overriding the validation to return proper message with error code instead of just throwing internal server error
+        }
+
+        User user = new User();
+        user = userGetServices.getUserObjectByUsernameForInternal(loginUserDTO.getUsername());
+        
+        if(user == null){
+            return gson.toJson("User not found, try using a different username");
+        }
+
+        if(user.getPassword().equals(loginUserDTO.getPassword())){
+            return gson.toJson(new SuccessfulUserCreationMessage(user.getId(), "User logged in successfully"));
+        } else {
+            return gson.toJson("Incorrect password, please try again");
+        }
 
     }
     

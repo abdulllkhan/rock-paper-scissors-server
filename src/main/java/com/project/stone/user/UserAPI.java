@@ -59,5 +59,14 @@ public class UserAPI {
         return userPostServices.createUser(createUserDTO);
 
     }
+
+    @PostMapping("api/login")
+    public String userLogin(@Valid @RequestBody CreateUserDTO loginUserDTO) throws Exception {
+
+        return userPostServices.userLogin(loginUserDTO);
+
+    }
+
+
     
 }
