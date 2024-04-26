@@ -1,7 +1,7 @@
 package com.project.stone.user.entity;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -21,6 +21,6 @@ public class CreateUserDTO {
     private String username;
 
     @NotBlank
-    private String password;
+    private String hashedPassword;
     
 }

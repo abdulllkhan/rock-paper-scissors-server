@@ -1,12 +1,13 @@
 package com.project.stone.user.services;
 
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Optional;
 
 import javax.sql.DataSource;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.google.gson.Gson;
+import com.project.stone.sha.SHA256;
+import com.project.stone.user.entity.CommonConstants;
 import com.project.stone.user.entity.CreateUserDTO;
 import com.project.stone.user.entity.User;
 
@@ -25,7 +28,7 @@ public class UserPostServicesImplementation implements UserPostServices{
 
     private Gson gson = new Gson();
     private DataSource dataSource;
-    private UserGetServices userGetServices;    
+    private UserGetServices userGetServices;   
     
     @Autowired
     public UserPostServicesImplementation(Gson gson,
@@ -46,7 +49,7 @@ public class UserPostServicesImplementation implements UserPostServices{
             throw new Exception("User cannot be null");
         }
         try{
-            if(createUserDTO.getUsername().isBlank() || createUserDTO.getPassword().isBlank()){
+            if(createUserDTO.getUsername().isBlank() || createUserDTO.getHashedPassword().isBlank()){
                 throw new Exception("Username or password cannot be blank");
             }
         } catch (Exception e){
@@ -58,16 +61,21 @@ public class UserPostServicesImplementation implements UserPostServices{
         user = userGetServices.getUserObjectByUsernameForInternal(createUserDTO.getUsername());
 
         if(user != null){
-            return gson.toJson("User already exists, please use a diffrent username");
+            return gson.toJson("User already exists, please use a different username");
         }
 
         try (Connection connection = dataSource.getConnection();
             //  PreparedStatement statement = connection.prepareStatement("SELECT id, username,created_at FROM users WHERE id = ?")) {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO users (username, password, created_at) VALUES (?, ?, ?)")) {
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO users (username, digest, salt, created_at) VALUES (?, ?, ?, ?)")) {
 
+            String createdSalt = generateRandomString(32);
+            String createdDigest = SHA256.getSHA256(createUserDTO.getHashedPassword() + createdSalt + CommonConstants.PEPPER);
+            Long currentTime = System.currentTimeMillis();
+            
             preparedStatement.setString(1, createUserDTO.getUsername());
-            preparedStatement.setString(2, createUserDTO.getPassword());
-            preparedStatement.setLong(3, System.currentTimeMillis());
+            preparedStatement.setString(2, createdDigest);
+            preparedStatement.setString(3, createdSalt);
+            preparedStatement.setLong(4, currentTime);
 
             int rowsInserted = preparedStatement.executeUpdate();
             if (rowsInserted > 0) {
@@ -98,11 +106,11 @@ public class UserPostServicesImplementation implements UserPostServices{
             return gson.toJson(e.getMessage());
         }
         try{
-            if(loginUserDTO.getUsername().isBlank() || loginUserDTO.getPassword().isBlank()){
+            if(loginUserDTO.getUsername().isBlank() || loginUserDTO.getHashedPassword().isBlank()){
                 throw new Exception("Username or password cannot be blank");
             }
         } catch (Exception e){
-            return gson.toJson(e.getMessage());
+            return gson.toJson("{ message: " + e.getMessage() + "}");
             // throw new UserException(e.getMessage()); // work on overriding the validation to return proper message with error code instead of just throwing internal server error
         }
 
@@ -110,14 +118,42 @@ public class UserPostServicesImplementation implements UserPostServices{
         user = userGetServices.getUserObjectByUsernameForInternal(loginUserDTO.getUsername());
         
         if(user == null){
-            return gson.toJson("User not found, try using a different username");
+            return gson.toJson("{ message: " + "User not found, use proper username" + "}");
         }
 
-        if(user.getPassword().equals(loginUserDTO.getPassword())){
+        if(verifyPassword(user, loginUserDTO.getHashedPassword())){
             return gson.toJson(new SuccessfulUserCreationMessage(user.getId(), "User logged in successfully"));
         } else {
-            return gson.toJson("Incorrect password, please try again");
+
+            return gson.toJson("{ message: Incorrect password, please try again}");
         }
+
+    }
+
+    private Boolean verifyPassword(User user, String hashedPassword) throws Exception{
+
+        String salt = user.getSalt();
+        String digest = user.getDigest();
+        
+        String hashedPasswordToVerify = SHA256.getSHA256(hashedPassword + salt + CommonConstants.PEPPER);
+
+        if(hashedPasswordToVerify.equals(digest)){
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public static String generateRandomString(int length) {
+
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(CommonConstants.ALPHABETS.length());
+            sb.append(CommonConstants.ALPHABETS.charAt(randomIndex));
+        }
+        return sb.toString();
 
     }
     
