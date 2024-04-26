@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.project.stone.exceptions.CustomException;
 import com.project.stone.user.entity.User;
 import com.project.stone.user.entity.UserRepository;
 import com.project.stone.user.exception.UserException;
@@ -63,8 +64,7 @@ public class UserGetServicesImplementation implements UserGetServices{
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle exceptions
+            throw new CustomException("SQL", e.getMessage());
         }
 
         Gson gson = new GsonBuilder().create();
@@ -90,8 +90,7 @@ public class UserGetServicesImplementation implements UserGetServices{
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle exceptions
+            throw new CustomException("SQL", e.getMessage());
         }
 
         return user;

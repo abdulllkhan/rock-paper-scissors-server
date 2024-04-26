@@ -1,6 +1,7 @@
 package com.project.stone.sha;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Component
 public class SHA256 {
 
-    public static String getSHA256(String input) throws Exception {
+    public static String getSHA256(String input) throws RuntimeException, NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] bytes = md.digest(input.getBytes());
         StringBuilder sb = new StringBuilder();

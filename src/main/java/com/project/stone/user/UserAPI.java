@@ -44,7 +44,7 @@ public class UserAPI {
     }
 
     @GetMapping("api/user/{id}")
-    public String getUserDetails(@PathVariable Integer id) throws Exception {
+    public String getUserDetails(@PathVariable Integer id) throws Throwable {
         try{
             return userGetServices.getUserByIdAsJson(id);
         } catch (Exception e) {
@@ -54,14 +54,14 @@ public class UserAPI {
     }
 
     @PostMapping("api/user")
-    public String createUser(@Valid @RequestBody CreateUserDTO createUserDTO) throws Exception {
+    public String createUser(@Valid @RequestBody CreateUserDTO createUserDTO) throws Throwable {
 
         return userPostServices.createUser(createUserDTO);
 
     }
 
     @PostMapping("api/login")
-    public String userLogin(@Valid @RequestBody CreateUserDTO loginUserDTO) throws Exception {
+    public String userLogin(@Valid @RequestBody CreateUserDTO loginUserDTO) throws Throwable {
 
         return userPostServices.userLogin(loginUserDTO);
 
