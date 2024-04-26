@@ -38,6 +38,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// spring websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 	// implementation 'org.liquibase:liquibase-core'
 	// implementation 'org.springframework.session:spring-session-jdbc'
 	// validation of fields of entities or dto's
