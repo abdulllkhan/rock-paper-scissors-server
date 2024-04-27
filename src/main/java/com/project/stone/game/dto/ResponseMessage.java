@@ -1,4 +1,4 @@
-package com.project.stone.game.entity;
+package com.project.stone.game.dto;
 
 public class ResponseMessage {
 

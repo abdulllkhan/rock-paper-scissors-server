@@ -3,8 +3,8 @@ package com.project.stone.game.services;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import com.project.stone.game.entity.CreateNewGameDTO;
-import com.project.stone.game.entity.JoinGameDTO;
+import com.project.stone.game.dto.CreateNewGameDTO;
+import com.project.stone.game.dto.JoinGameDTO;
 import com.project.stone.game.entity.Room;
 
 @Service

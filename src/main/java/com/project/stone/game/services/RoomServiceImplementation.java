@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.project.stone.exceptions.CustomException;
-import com.project.stone.game.entity.CreateNewGameDTO;
-import com.project.stone.game.entity.JoinGameDTO;
-import com.project.stone.game.entity.JoiningGameSuccessfullMessage;
+import com.project.stone.game.dto.CreateNewGameDTO;
+import com.project.stone.game.dto.JoinGameDTO;
+import com.project.stone.game.dto.JoiningGameSuccessfullMessage;
+import com.project.stone.game.dto.SuccessfulRoomCreationMessage;
 import com.project.stone.game.entity.Room;
 import com.project.stone.game.entity.RoomRepository;
-import com.project.stone.game.entity.SuccessfulRoomCreationMessage;
 import com.project.stone.user.entity.CommonConstants;
 import com.project.stone.user.entity.User;
 import com.project.stone.user.entity.UserRepository;
