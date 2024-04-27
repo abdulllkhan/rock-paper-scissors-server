@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.project.stone.game.dto.CreateNewGameDTO;
+import com.project.stone.game.dto.EndGameDTO;
 import com.project.stone.game.dto.JoinGameDTO;
 import com.project.stone.game.services.RoomService;
 
@@ -47,8 +48,8 @@ public class GameController {
     }
 
     @PostMapping("api/game/end")
-    public String endGame(@Valid @RequestBody JoinGameDTO joinGameDTO) throws Throwable{
-        return roomService.joinGame(joinGameDTO);
+    public String endGame(@Valid @RequestBody EndGameDTO endGameDTO) throws Throwable{
+        return roomService.endGame(endGameDTO);
     }
     
     

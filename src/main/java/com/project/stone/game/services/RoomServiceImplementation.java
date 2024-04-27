@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.project.stone.exceptions.CustomException;
 import com.project.stone.game.dto.CreateNewGameDTO;
+import com.project.stone.game.dto.EndGameDTO;
 import com.project.stone.game.dto.JoinGameDTO;
 import com.project.stone.game.dto.JoiningGameSuccessfullMessage;
 import com.project.stone.game.dto.SuccessfulRoomCreationMessage;
@@ -67,6 +68,50 @@ public class RoomServiceImplementation implements RoomService{
         return gson.toJson(room);
 
 	}
+
+
+    @Override
+    public String endGame(EndGameDTO endGameDTO) throws RuntimeException, Exception {
+
+        try{
+            endGameDTO.getSessionCode();
+        } catch(NullPointerException e){
+            throw new CustomException("400", "Room ID cannot be null");
+        }
+
+        String sessionCode = endGameDTO.getSessionCode();
+
+        Room room = new Room();
+        room = getRoomBySessionCode(sessionCode);
+
+        if(room.getId() == 0){
+            throw new CustomException("400", "Room not found. Pass proper roomId");
+        }
+
+        if(room.getIsActive() == false){
+            throw new CustomException("400", "Room is not active");
+        }
+
+        try(Connection connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement("UPDATE rooms SET is_active = false WHERE session_code = ?")){
+
+            statement.setString(1, sessionCode);
+
+            int rowsUpdated = statement.executeUpdate();
+
+            if(rowsUpdated > 0){
+                return gson.toJson(new SuccessfulRoomCreationMessage(room.getId(), "Game ended successfully. Room closed.", room.getSessionCode()));
+            } else {
+                throw new CustomException("500", "Failed to end the room!");
+            }
+
+        } catch (RuntimeException e){
+            throw new CustomException("500", e.getMessage());
+        } catch (SQLException e){
+            throw new CustomException("400", e.getMessage());
+        }
+
+    }
 
     @Override
     public String joinGame(JoinGameDTO joinGameDTO) throws RuntimeException, Exception {
