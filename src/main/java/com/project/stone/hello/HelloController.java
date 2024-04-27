@@ -15,6 +15,6 @@ public class HelloController {
 
     @GetMapping("healthstatus")
     public String healthStatus() {
-        return "Hello, World!";
+        return "I have ashtma";
     }
 }

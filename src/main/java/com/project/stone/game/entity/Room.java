@@ -19,10 +19,10 @@ public class Room {
     private int id;
 
     @Column(name = "user1_id")
-    private int user1Id;
+    private Integer user1Id;
 
     @Column(name = "user2_id")
-    private int user2Id;
+    private Integer user2Id;
 
     @Column(name = "is_active")
     private Boolean isActive;
@@ -32,5 +32,8 @@ public class Room {
 
     @Column(name = "session_code")
     private String sessionCode;
+
+    @Column(name = "winner_id")
+    private Integer winnerId;
 
 }

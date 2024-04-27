@@ -18,6 +18,7 @@ import com.project.stone.game.dto.EndGameDTO;
 import com.project.stone.game.dto.JoinGameDTO;
 import com.project.stone.game.dto.JoiningGameSuccessfullMessage;
 import com.project.stone.game.dto.SuccessfulRoomCreationMessage;
+import com.project.stone.game.entity.GameRepository;
 import com.project.stone.game.entity.Room;
 import com.project.stone.game.entity.RoomRepository;
 import com.project.stone.user.dto.CommonConstants;
@@ -32,6 +33,7 @@ public class RoomServiceImplementation implements RoomService{
 
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+    private final GameRepository gameRepository;
     private DataSource dataSource;
     private Gson gson = new Gson();
 
@@ -39,11 +41,13 @@ public class RoomServiceImplementation implements RoomService{
     public RoomServiceImplementation(RoomRepository roomRepository,
                                      UserRepository userRepository,
                                      DataSource dataSource,
-                                     Gson gson) {
+                                     Gson gson,
+                                     GameRepository gameRepository) {
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
         this.dataSource = dataSource;
         this.gson = gson;
+        this.gameRepository = gameRepository;
     }
 
     @Override
@@ -276,6 +280,8 @@ public class RoomServiceImplementation implements RoomService{
                     room.setUser2Id(resultSet.getInt("user2_id"));
                     room.setIsVacant(resultSet.getBoolean("is_vacant"));
                     room.setIsActive(resultSet.getBoolean("is_active"));
+                    // room.setWinnerId(resultSet.getString("winner_id"));
+                    room.setWinnerId(resultSet.getInt("winner_id"));
                 }
             }
 
@@ -305,6 +311,8 @@ public class RoomServiceImplementation implements RoomService{
                     room.setUser2Id(resultSet.getInt("user2_id"));
                     room.setIsVacant(resultSet.getBoolean("is_vacant"));
                     room.setIsActive(resultSet.getBoolean("is_active"));
+                    // room.setWinnerId(resultSet.getString("winner_id"));
+                    room.setWinnerId(resultSet.getInt("winner_id"));
                 }
             }
 
