@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.project.stone.game.entity.CreateNewGameDTO;
+import com.project.stone.game.entity.JoinGameDTO;
 import com.project.stone.game.entity.Room;
 
 @Service
@@ -17,5 +18,7 @@ public interface RoomService {
     String getGameSessionDetails(String sessionCode) throws RuntimeException, Exception;
 
     String createNewGame(CreateNewGameDTO createNewGameDTO) throws RuntimeException, Exception;
+
+    String joinGame(JoinGameDTO joinGameDTO) throws RuntimeException, Exception;
 
 }

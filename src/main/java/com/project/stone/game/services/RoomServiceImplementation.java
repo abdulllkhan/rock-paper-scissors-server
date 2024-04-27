@@ -14,7 +14,8 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.project.stone.exceptions.CustomException;
 import com.project.stone.game.entity.CreateNewGameDTO;
-import com.project.stone.game.entity.ResponseMessage;
+import com.project.stone.game.entity.JoinGameDTO;
+import com.project.stone.game.entity.JoiningGameSuccessfullMessage;
 import com.project.stone.game.entity.Room;
 import com.project.stone.game.entity.RoomRepository;
 import com.project.stone.game.entity.SuccessfulRoomCreationMessage;
@@ -66,6 +67,66 @@ public class RoomServiceImplementation implements RoomService{
         return gson.toJson(room);
 
 	}
+
+    @Override
+    public String joinGame(JoinGameDTO joinGameDTO) throws RuntimeException, Exception {
+
+        try{
+            joinGameDTO.getUserId();
+            joinGameDTO.getSessionCode();
+        } catch(NullPointerException e){
+            throw new CustomException("400", "User ID/Session Code cannot be null");
+        }
+
+        Integer userId = joinGameDTO.getUserId();
+        String sessionCode = joinGameDTO.getSessionCode();
+
+        User user = new User();
+        user = userRepository.findById(userId).orElse(null);
+        if(user == null){
+            throw new CustomException("400", "User not found. Pass proper userId");
+        }
+
+        Room room = new Room();
+        room = getRoomBySessionCode(sessionCode);
+
+        if(room.getId() == 0){
+            throw new CustomException("400", "Room not found. Pass proper sessionCode");
+        }
+
+        if(room.getIsVacant() == false){
+            throw new CustomException("400", "Room is not vacant");
+        }
+
+        if(room.getIsActive() == false){
+            throw new CustomException("400", "Room is not active");
+        }
+
+        if(room.getUser1Id() == userId){
+            throw new CustomException("400", "User is already in the room");
+        }
+
+        try(Connection connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement("UPDATE rooms SET user2_id = ?, is_vacant = false WHERE session_code = ?")){
+
+            statement.setInt(1, userId);
+            statement.setString(2, sessionCode);
+
+            int rowsUpdated = statement.executeUpdate();
+
+            if(rowsUpdated > 0){
+                return gson.toJson(new JoiningGameSuccessfullMessage(room.getId(), "Room joined successfully", sessionCode, room.getUser1Id()));
+            } else {
+                throw new CustomException("500", "Failed to update the room!");
+            }
+
+        } catch (RuntimeException e){
+            throw new CustomException("500", e.getMessage());
+        } catch (SQLException e){
+            throw new CustomException("400", e.getMessage());
+        }
+
+    }
 
     @Override
     public String createNewGame(CreateNewGameDTO createNewGameDTO) throws RuntimeException, Exception{
@@ -211,7 +272,6 @@ public class RoomServiceImplementation implements RoomService{
         return room;
 
     }
-
     
     
 }
