@@ -19,8 +19,8 @@ import org.springframework.validation.annotation.Validated;
 import com.google.gson.Gson;
 import com.project.stone.exceptions.CustomException;
 import com.project.stone.sha.SHA256;
-import com.project.stone.user.entity.CommonConstants;
-import com.project.stone.user.entity.CreateUserDTO;
+import com.project.stone.user.dto.CommonConstants;
+import com.project.stone.user.dto.CreateUserDTO;
 import com.project.stone.user.entity.User;
 
 

@@ -4,7 +4,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.springframework.stereotype.Service;
 
-import com.project.stone.user.entity.CreateUserDTO;
+import com.project.stone.user.dto.CreateUserDTO;
 
 @Service
 public interface UserPostServices {

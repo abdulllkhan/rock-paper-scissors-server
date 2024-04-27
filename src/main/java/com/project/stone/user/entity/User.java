@@ -41,6 +41,7 @@ public class User {
     @Column(name = "created_at")
     private Long createdAt;
 
-    
+    @Column(name = "score")
+    private Integer score;
     
 }

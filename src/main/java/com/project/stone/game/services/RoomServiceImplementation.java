@@ -20,7 +20,7 @@ import com.project.stone.game.dto.JoiningGameSuccessfullMessage;
 import com.project.stone.game.dto.SuccessfulRoomCreationMessage;
 import com.project.stone.game.entity.Room;
 import com.project.stone.game.entity.RoomRepository;
-import com.project.stone.user.entity.CommonConstants;
+import com.project.stone.user.dto.CommonConstants;
 import com.project.stone.user.entity.User;
 import com.project.stone.user.entity.UserRepository;
 
@@ -229,7 +229,7 @@ public class RoomServiceImplementation implements RoomService{
     public Boolean activeUserSessionsOfUser(Integer userId){
 
         try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE user1_id = ? OR user2_id = ? AND is_active = true")){
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE ( user1_id = ? OR user2_id = ? ) AND is_active = true")){
 
             statement.setInt(1, userId);
             statement.setInt(2, userId);

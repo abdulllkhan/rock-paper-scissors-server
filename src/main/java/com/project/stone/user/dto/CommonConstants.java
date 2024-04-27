@@ -1,4 +1,4 @@
-package com.project.stone.user.entity;
+package com.project.stone.user.dto;
 
 public class CommonConstants {
 

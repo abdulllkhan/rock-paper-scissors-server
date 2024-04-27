@@ -6,12 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.project.stone.user.entity.CreateUserDTO;
+import com.project.stone.user.dto.CreateUserDTO;
 import com.project.stone.user.services.UserGetServices;
 import com.project.stone.user.services.UserPostServices;
 
@@ -65,6 +64,11 @@ public class UserAPI {
 
         return userPostServices.userLogin(loginUserDTO);
 
+    }
+
+    @GetMapping("api/user/highscore")
+    public String getHighScore() throws Throwable {
+        return gson.toJson(userGetServices.getHighScores());
     }
 
 
