@@ -42,6 +42,10 @@ dependencies {
 
 	// spring websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	compileOnly 'javax.websocket:javax.websocket-api:1.1'
+	implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:8.5.23'
+
+	// compileOnly 'jakarta.websocket:jakarta.websocket-api:1.1.2'
 
 	// implementation 'org.liquibase:liquibase-core'
 	// implementation 'org.springframework.session:spring-session-jdbc'
