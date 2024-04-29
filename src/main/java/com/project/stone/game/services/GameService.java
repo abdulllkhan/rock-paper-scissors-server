@@ -9,6 +9,8 @@ import com.project.stone.game.dto.SingleRoundPayload;
 @Component
 public interface GameService {
 
+    String fetchGameWinner(String sessionCode) throws RuntimeException, Exception;
+
     String playRound(SingleRoundPayload singleRoundPayload) throws RuntimeException, Exception;
 
     String fetchRoundWinner(String sessionCode, String round) throws RuntimeException, Exception;

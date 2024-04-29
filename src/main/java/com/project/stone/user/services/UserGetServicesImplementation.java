@@ -99,6 +99,31 @@ public class UserGetServicesImplementation implements UserGetServices{
         return user;
     }
 
+    public User getUserObjectByIdForInternal(Integer id) throws UserException {
+        User user = null;
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT id, username, digest, salt, score, created_at FROM users WHERE id = ?")) {
+
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    user = new User();
+                    user.setId(resultSet.getInt("id"));
+                    // user.setEmail(resultSet.getString("email"));
+                    user.setDigest(resultSet.getString("digest"));
+                    user.setSalt(resultSet.getString("salt"));
+                    user.setUsername(resultSet.getString("username"));
+                    user.setCreatedAt(resultSet.getLong("created_at"));
+                    user.setScore(resultSet.getInt("score"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new CustomException("SQL", e.getMessage());
+        }
+
+        return user;
+    }
+
     @Override
     public HighScoreDTO getHighScores() throws RuntimeException {
         

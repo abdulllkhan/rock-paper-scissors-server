@@ -18,24 +18,198 @@ import com.project.stone.game.dto.SingleRoundPayload;
 import com.project.stone.game.dto.SuccessfulRoomCreationMessage;
 import com.project.stone.game.entity.RockPaperScissiors;
 import com.project.stone.game.entity.Room;
+import com.project.stone.user.entity.User;
+import com.project.stone.user.services.UserGetServicesImplementation;
+import com.project.stone.game.dto.GameWinnerDetails;
 
 @Service
 @Component
 public class GameServiceImplementation implements GameService{
 
     private final RoomServiceImplementation roomServiceImplementation;
+    private final UserGetServicesImplementation userGetServicesImplementation;
     private Gson gson = new Gson();
     private DataSource dataSource;
 
     @Autowired
     public GameServiceImplementation(Gson gson,
                                     RoomServiceImplementation roomServiceImplementation,
-                                    DataSource dataSource) {
+                                    DataSource dataSource,
+                                    UserGetServicesImplementation userGetServicesImplementation) {
         this.gson = gson;
         this.roomServiceImplementation = roomServiceImplementation;
         this.dataSource = dataSource;
+        this.userGetServicesImplementation = userGetServicesImplementation;
     }
 
+    @Override
+    public String fetchGameWinner(String sessionCode) throws RuntimeException, Exception {
+
+        try{
+            sessionCode.isBlank();
+        } catch(NullPointerException e){
+            throw new CustomException("400", "sessionCode cannot be null");
+        }
+
+        Room room = new Room();
+        room = roomServiceImplementation.getRoomBySessionCode(sessionCode);
+
+        if(room.getId() == 0){
+            throw new CustomException("400", "Room not found. Pass proper roomId");
+        }
+        Integer sessionId = room.getId();
+
+        if(room.getIsActive() == false){
+            throw new CustomException("400", "Room is not active");
+        }
+
+        if(room.getIsVacant() == true){
+            throw new CustomException("400", "Room is vacant. Please wait for another player to join");
+        }
+
+        try(Connection connection = dataSource.getConnection();){
+
+            PreparedStatement preStatement = connection.prepareStatement("SELECT * FROM game WHERE session_id = ?");
+
+            preStatement.setInt(1, sessionId);
+
+            Integer count = 0;
+            try(ResultSet resultSet = preStatement.executeQuery();){
+                while(resultSet.next()){
+                    count++;
+                }
+            }
+
+            if(count < 6){
+                throw new CustomException("400", "All rounds have not been played yet");
+            }
+
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM game WHERE session_id = ?");
+
+            statement.setInt(1, sessionId);
+
+            String user1Move = "";
+            String user2Move = "";
+            String user3Move = "";
+            String user4Move = "";
+            String user5Move = "";
+            String user6Move = "";
+
+            try(ResultSet resultSet = statement.executeQuery();){
+                while(resultSet.next()){
+                    if(resultSet.getInt("round_id") == 1){
+                        if(resultSet.getInt("user_id") == room.getUser1Id()){
+                            user1Move = resultSet.getString("user_choice");
+                        } else {
+                            user2Move = resultSet.getString("user_choice");
+                        }
+                    } else if(resultSet.getInt("round_id") == 2){
+                        if(resultSet.getInt("user_id") == room.getUser1Id()){
+                            user3Move = resultSet.getString("user_choice");
+                        } else {
+                            user4Move = resultSet.getString("user_choice");
+                        }
+                    } else {
+                        if(resultSet.getInt("user_id") == room.getUser1Id()){
+                            user5Move = resultSet.getString("user_choice");
+                        } else {
+                            user6Move = resultSet.getString("user_choice");
+                        }
+                    }
+                }
+            }
+
+            Integer user1Wins = 0;
+            Integer user2Wins = 0;
+
+            RockPaperScissiors user1MoveEnum = RockPaperScissiors.fromString(user1Move);
+            RockPaperScissiors user2MoveEnum = RockPaperScissiors.fromString(user2Move);
+            RockPaperScissiors user3MoveEnum = RockPaperScissiors.fromString(user3Move);
+            RockPaperScissiors user4MoveEnum = RockPaperScissiors.fromString(user4Move);
+            RockPaperScissiors user5MoveEnum = RockPaperScissiors.fromString(user5Move);
+            RockPaperScissiors user6MoveEnum = RockPaperScissiors.fromString(user6Move);
+
+            if(user1Move.equals(user2Move)){
+                user1Wins++;
+                user2Wins++;
+            } else if(user1Move.equals("rock") && user2Move.equals("scissors")){
+                user1Wins++;
+            } else if(user1Move.equals("scissors") && user2Move.equals("paper")){
+                user1Wins++;
+            } else if(user1Move.equals("paper") && user2Move.equals("rock")){
+                user1Wins++;
+            } else {
+                user2Wins++;
+            }
+
+            if(user3Move.equals(user4Move)){
+                user1Wins++;
+                user2Wins++;
+            } else if(user3Move.equals("rock") && user4Move.equals("scissors")){
+                user1Wins++;
+            } else if(user3Move.equals("scissors") && user4Move.equals("paper")){
+                user1Wins++;
+            } else if(user3Move.equals("paper") && user4Move.equals("rock")){
+                user1Wins++;
+            } else {
+                user2Wins++;
+            }
+
+            if(user5Move.equals(user6Move)){
+                user1Wins++;
+                user2Wins++;
+            } else if(user5Move.equals("rock") && user6Move.equals("scissors")){
+                user1Wins++;
+            } else if(user5Move.equals("scissors") && user6Move.equals("paper")){
+                user1Wins++;
+            } else if(user5Move.equals("paper") && user6Move.equals("rock")){
+                user1Wins++;
+            } else {
+                user2Wins++;
+            }
+
+            
+            GameWinnerDetails gamerWinnerDetails = new GameWinnerDetails();
+            gamerWinnerDetails.setSessionCode(sessionCode);
+            gamerWinnerDetails.setUserId1(room.getUser1Id());
+            gamerWinnerDetails.setUserId2(room.getUser2Id());
+            gamerWinnerDetails.setMessage("Game Drawn");
+            
+            Integer winnerId = 0;
+            
+            if(user1Wins > user2Wins){
+                winnerId = room.getUser1Id();
+            } else if(user1Wins < user2Wins){
+                winnerId = room.getUser2Id();
+            }
+            gamerWinnerDetails.setWinnerId(winnerId);
+
+            if(winnerId != 0){
+                room.setWinnerId(winnerId);
+    
+                PreparedStatement updateStatement = connection.prepareStatement("UPDATE rooms SET winner_id = ? WHERE id = ?");
+    
+                updateStatement.setInt(1, winnerId);
+                updateStatement.setInt(2, sessionId);
+                
+                updateStatement.executeUpdate();
+
+                User user = new User();
+                user = userGetServicesImplementation.getUserObjectByIdForInternal(winnerId);
+                user.setScore(user.getScore() + 1);
+                gamerWinnerDetails.setMessage(user.getUsername() + " won");
+                gamerWinnerDetails.setWinnerName(user.getUsername());
+            }
+
+            return gson.toJson(gamerWinnerDetails);
+        
+        } catch (RuntimeException e){
+            throw new CustomException("400", e.getMessage());
+        } catch (SQLException e){
+            throw new CustomException("400", e.getMessage());
+        }
+
+    }
     
     @Override
     public String fetchRoundWinner(String sessionCode, String round) throws RuntimeException, Exception {
@@ -63,9 +237,9 @@ public class GameServiceImplementation implements GameService{
             throw new CustomException("400", "Room is vacant. Please wait for another player to join");
         }
 
-        if(room.getWinnerId() != 0){
-            throw new CustomException("400", "Game already ended. Winner is already declared");
-        }
+        // if(room.getWinnerId() != 0){
+        //     throw new CustomException("400", "Game already ended. Winner is already declared");
+        // }
 
         try(Connection connection = dataSource.getConnection();){
 
@@ -257,5 +431,6 @@ public class GameServiceImplementation implements GameService{
         }
 
     }
+
     
 }

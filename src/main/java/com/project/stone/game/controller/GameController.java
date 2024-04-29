@@ -65,5 +65,10 @@ public class GameController {
     public String fetchRoundWinner(@PathVariable String sessionCode,  @RequestParam("round") String round) throws Throwable{
         return gameService.fetchRoundWinner(sessionCode, round);
     }
+
+    @GetMapping("api/game/winner/{sessionCode}")
+    public String fetchGameWinner(@PathVariable String sessionCode) throws Throwable{
+        return gameService.fetchGameWinner(sessionCode);
+    }
      
 }
