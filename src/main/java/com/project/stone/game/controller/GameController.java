@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
@@ -58,6 +59,11 @@ public class GameController {
     @PostMapping("api/game/play")
     public String playRound(@Valid @RequestBody SingleRoundPayload singleRoundPayload) throws Throwable{
         return gameService.playRound(singleRoundPayload);
+    }
+
+    @GetMapping("api/game/round/{sessionCode}")
+    public String fetchRoundWinner(@PathVariable String sessionCode,  @RequestParam("round") String round) throws Throwable{
+        return gameService.fetchRoundWinner(sessionCode, round);
     }
      
 }
