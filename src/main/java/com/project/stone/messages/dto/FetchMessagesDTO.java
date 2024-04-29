@@ -13,6 +13,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FetchMessagesDTO {
 
+    private Boolean hasMessages;
+
+    private Integer messageCount;
+
     private ArrayList<MessageDetails> messages = new ArrayList<>();
 
     @Getter

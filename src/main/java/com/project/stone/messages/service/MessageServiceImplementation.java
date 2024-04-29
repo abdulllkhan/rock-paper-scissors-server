@@ -2,7 +2,9 @@ package com.project.stone.messages.service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.sql.DataSource;
 
@@ -14,6 +16,8 @@ import com.project.stone.exceptions.CustomException;
 import com.project.stone.game.entity.Room;
 import com.project.stone.game.services.RoomService;
 import com.project.stone.game.services.RoomServiceImplementation;
+import com.project.stone.messages.dto.FetchMessagesDTO;
+import com.project.stone.messages.dto.FetchMessagesDTO.MessageDetails;
 import com.project.stone.messages.dto.ResponseMessage;
 
 import com.google.gson.Gson;
@@ -50,6 +54,95 @@ public class MessageServiceImplementation implements MessageService{
     }
 
     @Override
+    public String fetchNewMessages(String sessionCode, String username) {
+
+        // verify if sessionCode and username are not null
+        try {
+            username.isBlank();
+            sessionCode.isBlank();
+        } catch (NullPointerException e) {
+            throw new CustomException("400", "username and sessionCode are mandatory fields");
+        }
+
+        try{
+            // verifying if the session code is valid
+            if(!roomServiceImplementation.isSessionCodeValid(sessionCode)){
+                throw new CustomException("400", "Wrong session code passed in the payload. Pass proper sessionCode");
+            }
+            if(!roomServiceImplementation.isSessionActive(sessionCode)){
+                throw new CustomException("400", "Session is no longer active");
+            }
+    
+            Room room = roomServiceImplementation.getRoomBySessionCode(sessionCode);
+            User user = userGetServicesImplementation.getUserObjectByUsernameForInternal(username);
+    
+            if(!(room.getUser1Id() == user.getId() || room.getUser2Id() == user.getId())){
+                throw new CustomException("400", "User is not a part of this room. Wrong username");
+            }
+
+            FetchMessagesDTO fetchMessagesDTO = new FetchMessagesDTO();
+            ArrayList<MessageDetails> messages = new ArrayList<>();
+
+            // default values
+            fetchMessagesDTO.setHasMessages(false);
+            fetchMessagesDTO.setMessageCount(0);
+            fetchMessagesDTO.setMessages(messages);
+
+            try{
+                Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement("SELECT * FROM messages WHERE (session_code = ? AND username != ? AND is_fetched = false) ORDER BY created_at DESC");
+
+                statement.setString(1, sessionCode);
+                statement.setString(2, username);
+
+                ResultSet resultSet = statement.executeQuery();
+
+                Integer messageCount = 0;
+
+                while(resultSet.next()){
+                    messageCount++;
+                    MessageDetails messageDetails = fetchMessagesDTO.new MessageDetails();
+
+                    messageDetails.setMessage(resultSet.getString("message"));
+                    messageDetails.setSender(resultSet.getString("username"));
+                    messageDetails.setCreatedAt(resultSet.getLong("created_at"));
+
+                    messages.add(messageDetails);
+
+                }
+
+                if(messageCount > 0){
+                    fetchMessagesDTO.setHasMessages(true);
+                    fetchMessagesDTO.setMessageCount(messageCount);
+                    fetchMessagesDTO.setMessages(messages);
+                }
+
+                // updating the is_fetched column to true
+                statement = connection.prepareStatement("UPDATE messages SET is_fetched = true WHERE (session_code = ? AND username != ? AND is_fetched = false)");
+
+                statement.setString(1, sessionCode);
+                statement.setString(2, username);
+
+                Integer rowsChanged = statement.executeUpdate();
+                if(rowsChanged != messageCount){
+                    System.out.println("Failed to update all rows. There might be an issue in the database.");
+                    // throw new CustomException("500", "Failed to update the is_fetched column");
+                }
+
+                return gson.toJson(fetchMessagesDTO);
+
+            } catch(SQLException e){
+                throw new CustomException("400", "SQL Error. " + e.getMessage());
+            }
+
+
+        } catch (RuntimeException e){
+            throw new CustomException("400", e.getMessage());
+        }
+
+    }
+
+    @Override
     public String sendMessage(SendMesssagePayload sendMesssagePayload) {
 
         // verify if sessionCode, sender and message are not null
@@ -73,7 +166,7 @@ public class MessageServiceImplementation implements MessageService{
             Room room = roomServiceImplementation.getRoomBySessionCode(sendMesssagePayload.getSessionCode());
             User user = userGetServicesImplementation.getUserObjectByUsernameForInternal(sendMesssagePayload.getSender());
     
-            if(room.getUser1Id() == user.getId() || room.getUser2Id() == user.getId()){
+            if(!(room.getUser1Id() == user.getId() || room.getUser2Id() == user.getId())){
                 throw new CustomException("400", "Sender is not a part of this room");
             }
 
@@ -105,12 +198,6 @@ public class MessageServiceImplementation implements MessageService{
 
         // return gson.toJson(new ResponseMessage("Message sent successfully"));
 
-    }
-
-    @Override
-    public String fetchNewMessages(String username, String sessionCode) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'fetchNewMessages'");
     }
     
 }

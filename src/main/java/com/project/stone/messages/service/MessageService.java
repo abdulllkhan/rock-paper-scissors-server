@@ -9,7 +9,7 @@ import com.project.stone.messages.dto.SendMesssagePayload;
 @Component
 public interface MessageService {
 
-    String fetchNewMessages(String username, String sessionCode);
+    String fetchNewMessages(String sessionCode, String username);
 
     String sendMessage(SendMesssagePayload sendMesssagePayload);
     
