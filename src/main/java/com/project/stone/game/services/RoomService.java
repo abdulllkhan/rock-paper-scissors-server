@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.project.stone.game.dto.CreateNewGameDTO;
 import com.project.stone.game.dto.EndGameDTO;
 import com.project.stone.game.dto.JoinGameDTO;
+import com.project.stone.game.dto.SingleRoundPayload;
 import com.project.stone.game.entity.Room;
 
 @Service
@@ -23,5 +24,7 @@ public interface RoomService {
     String joinGame(JoinGameDTO joinGameDTO) throws RuntimeException, Exception;
 
     String endGame(EndGameDTO endGameDTO) throws RuntimeException, Exception;
+
+    // String playRound(SingleRoundPayload singleRoundPayload) throws RuntimeException, Exception;
 
 }

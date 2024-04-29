@@ -14,6 +14,8 @@ import com.google.gson.Gson;
 import com.project.stone.game.dto.CreateNewGameDTO;
 import com.project.stone.game.dto.EndGameDTO;
 import com.project.stone.game.dto.JoinGameDTO;
+import com.project.stone.game.dto.SingleRoundPayload;
+import com.project.stone.game.services.GameService;
 import com.project.stone.game.services.RoomService;
 
 @RestController
@@ -22,19 +24,20 @@ public class GameController {
 
     private final RoomService roomService;
     private Gson gson = new Gson();
+    private final GameService gameService;
 
     @Autowired
     public GameController(RoomService roomService,
-                          Gson gson) {
+                          Gson gson,
+                          GameService gameService) {
         this.roomService = roomService;
         this.gson = gson;
+        this.gameService = gameService;
     }
 
     @GetMapping("api/game/{sessionCode}")
     public String gameDetails(@PathVariable String sessionCode) throws Throwable{
-        
         return roomService.getGameSessionDetails(sessionCode);
-
     }
 
     @PostMapping("api/game")
@@ -51,6 +54,10 @@ public class GameController {
     public String endGame(@Valid @RequestBody EndGameDTO endGameDTO) throws Throwable{
         return roomService.endGame(endGameDTO);
     }
-    
-    
+
+    @PostMapping("api/game/play")
+    public String playRound(@Valid @RequestBody SingleRoundPayload singleRoundPayload) throws Throwable{
+        return gameService.playRound(singleRoundPayload);
+    }
+     
 }

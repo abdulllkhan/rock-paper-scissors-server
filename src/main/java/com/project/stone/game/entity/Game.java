@@ -31,4 +31,10 @@ public class Game {
     @Column(name = "is_played")
     private Boolean isPlayed;
 
+    @Column(name = "user_id")
+    private Integer userId;
+
+    @Column(name = "user_choice")
+    private String userChoice;
+
 }

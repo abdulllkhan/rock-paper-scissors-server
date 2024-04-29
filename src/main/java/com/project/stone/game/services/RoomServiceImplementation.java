@@ -17,6 +17,7 @@ import com.project.stone.game.dto.CreateNewGameDTO;
 import com.project.stone.game.dto.EndGameDTO;
 import com.project.stone.game.dto.JoinGameDTO;
 import com.project.stone.game.dto.JoiningGameSuccessfullMessage;
+import com.project.stone.game.dto.SingleRoundPayload;
 import com.project.stone.game.dto.SuccessfulRoomCreationMessage;
 import com.project.stone.game.entity.GameRepository;
 import com.project.stone.game.entity.Room;
