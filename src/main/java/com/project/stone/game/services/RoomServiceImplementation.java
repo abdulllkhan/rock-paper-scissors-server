@@ -263,6 +263,48 @@ public class RoomServiceImplementation implements RoomService{
         return sb.toString();
 
     }
+
+    public Boolean isSessionCodeValid(String sessionCode){
+            
+        try(Connection connection = dataSource.getConnection();
+        PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE session_code = ?")){
+            
+            statement.setString(1, sessionCode);
+            try(ResultSet resultSet = statement.executeQuery()){
+                while(resultSet.next()){
+                    return true;
+                }
+            }
+
+        }catch(SQLException e){
+            throw new CustomException("400", e.getMessage());
+        }catch(RuntimeException e){
+            throw new CustomException("500", e.getMessage());
+        }
+    
+        return false;
+    }
+
+    public Boolean isSessionActive(String sessionCode){
+            
+        try(Connection connection = dataSource.getConnection();
+        PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE session_code = ? AND is_active = true")){
+            
+            statement.setString(1, sessionCode);
+            try(ResultSet resultSet = statement.executeQuery()){
+                while(resultSet.next()){
+                    return true;
+                }
+            }
+
+        }catch(SQLException e){
+            throw new CustomException("400", e.getMessage());
+        }catch(RuntimeException e){
+            throw new CustomException("500", e.getMessage());
+        }
+    
+        return false;
+    }
     
     public Room getRoomBySessionCode(String sessionCode){
 
