@@ -47,7 +47,7 @@ dependencies {
 
 	// compileOnly 'jakarta.websocket:jakarta.websocket-api:1.1.2'
 
-	// implementation 'org.liquibase:liquibase-core'
+	implementation 'org.liquibase:liquibase-core'
 	// implementation 'org.springframework.session:spring-session-jdbc'
 	// validation of fields of entities or dto's
 	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
