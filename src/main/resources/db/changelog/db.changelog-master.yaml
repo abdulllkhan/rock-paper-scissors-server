@@ -1,7 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: 1
-      author: abdul
-      changes:
-        - sqlFile:
-            path: src/main/resources/db/changelog/changelog-files/base_file.sql
