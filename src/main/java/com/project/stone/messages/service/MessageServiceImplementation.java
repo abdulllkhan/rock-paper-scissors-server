@@ -88,8 +88,8 @@ public class MessageServiceImplementation implements MessageService{
             fetchMessagesDTO.setMessageCount(0);
             fetchMessagesDTO.setMessages(messages);
 
-            try{
-                Connection connection = dataSource.getConnection();
+            try(Connection connection = dataSource.getConnection();){
+                // Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement("SELECT * FROM messages WHERE (session_code = ? AND username != ? AND is_fetched = false) ORDER BY created_at DESC");
 
                 statement.setString(1, sessionCode);
@@ -128,6 +128,8 @@ public class MessageServiceImplementation implements MessageService{
                     System.out.println("Failed to update all rows. There might be an issue in the database.");
                     // throw new CustomException("500", "Failed to update the is_fetched column");
                 }
+
+                connection.close();
 
                 return gson.toJson(fetchMessagesDTO);
 
@@ -170,8 +172,8 @@ public class MessageServiceImplementation implements MessageService{
                 throw new CustomException("400", "Sender is not a part of this room");
             }
 
-            try{
-                Connection connection = dataSource.getConnection();
+            try(Connection connection = dataSource.getConnection();)
+                {
                 PreparedStatement statement = connection.prepareStatement("INSERT INTO messages (username, message, session_code, created_at) VALUES (?, ?, ?, ?)");
 
                 statement.setString(1, sendMesssagePayload.getSender());

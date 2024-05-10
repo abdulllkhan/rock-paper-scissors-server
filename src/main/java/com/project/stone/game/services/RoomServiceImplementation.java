@@ -234,7 +234,7 @@ public class RoomServiceImplementation implements RoomService{
     public Boolean activeUserSessionsOfUser(Integer userId){
 
         try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE ( user1_id = ? OR user2_id = ? ) AND is_active = true")){
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE ( user1_id = ? OR user2_id = ? ) AND (is_active = true AND is_vacant = true)")){
 
             statement.setInt(1, userId);
             statement.setInt(2, userId);
