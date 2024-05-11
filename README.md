@@ -54,7 +54,9 @@ Open Docker and make sure the engine is running.
 
 `docker run --name=mysql-container -e MYSQL_ROOT_PASSWORD=mysql -d mysql:8`
 
-`docker exec -it mysql-container mysql -uroot -p`
+`docker exec -it mysql-container mysql -uroot -p`  
+
+While mysql is running, type in CREATE DATABASE IF NOT EXISTS stone; to create the database.  
 
 When you have finished running the project, stop and remove the mysql container (can be done in the docker GUI too):  
 `docker stop mysql-container`  
