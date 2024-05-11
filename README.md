@@ -1,4 +1,4 @@
-### If you would like to use your local mysql  
+### If you would like to use your local MySQL:
 commands to install mysql:
 
 Installation command:
@@ -48,8 +48,8 @@ While mysql is running, type in `CREATE DATABASE IF NOT EXISTS stone;` to create
 If connection fails, check that your mysql password is set to 'mysql'  
 
 
-### If you would like to use a docker image:  
-Open docker and make sure the engine is running.  
+### If you would like to use a Docker image:  
+Open Docker and make sure the engine is running.  
 `docker pull mysql:8` 
 
 `docker run --name=mysql-container -e MYSQL_ROOT_PASSWORD=mysql -d mysql:8`
