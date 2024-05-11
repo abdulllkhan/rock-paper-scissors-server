@@ -59,9 +59,9 @@ public class GameServiceImplementation implements GameService{
         }
         Integer sessionId = room.getId();
 
-        if(room.getIsActive() == false){
-            throw new CustomException("400", "Room is not active");
-        }
+        // if(room.getIsActive() == false){
+        //     throw new CustomException("400", "Room is not active");
+        // }
 
         if(room.getIsVacant() == true){
             throw new CustomException("400", "Room is vacant. Please wait for another player to join");
