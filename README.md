@@ -1,5 +1,29 @@
-### If you would like to use your local MySQL:
-commands to install mysql:
+## If you would like to use your local MySQL:
+
+Java17LTS and MySQL8 are necessary to run the server
+
+### If you would like to use a create a MySQL Docker image:  
+Open Docker and make sure the engine is running.  
+`docker pull mysql:8` 
+
+`docker run --name=mysql-container -e MYSQL_ROOT_PASSWORD=mysql -d mysql:8`
+
+`docker exec -it mysql-container mysql -uroot -p`  
+
+While mysql is running, type in 1CREATE DATABASE IF NOT EXISTS stone;` to create the database.   
+
+
+When you have finished running the project, stop and remove the mysql container (can be done in the docker GUI too):  
+`docker stop mysql-container`  
+
+`docker rm mysql-container` 
+
+Now open the terminal to access mysql container using command line interface and create the stone database if it does not exist using the command:
+
+`CREATE DATABASE IF NOT EXISTS stone;`
+
+
+### Commands to install mysql if you are a Mac/Linux User:
 
 Installation command:
 
@@ -45,21 +69,5 @@ Login using the following command:
 
 While mysql is running, type in `CREATE DATABASE IF NOT EXISTS stone;` to create the database.  
 
-If connection fails, check that your mysql password is set to 'mysql'  
-
-
-### If you would like to use a Docker image:  
-Open Docker and make sure the engine is running.  
-`docker pull mysql:8` 
-
-`docker run --name=mysql-container -e MYSQL_ROOT_PASSWORD=mysql -d mysql:8`
-
-`docker exec -it mysql-container mysql -uroot -p`  
-
-While mysql is running, type in 1CREATE DATABASE IF NOT EXISTS stone;` to create the database.   
-
-
-When you have finished running the project, stop and remove the mysql container (can be done in the docker GUI too):  
-`docker stop mysql-container`  
-
-`docker rm mysql-container`  
+If connection fails, check that your mysql password is set to 'mysql' .
+ 
