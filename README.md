@@ -1,3 +1,4 @@
+### If you would like to use your local mysql  
 commands to install mysql:
 
 Installation command:
@@ -6,7 +7,7 @@ Installation command:
 
 Check if mysql is listed:
 
-`brew services list`
+`brew services list`   
 
 Start mysql:
 
@@ -45,3 +46,16 @@ Login using the following command:
 While mysql is running, type in `CREATE DATABASE IF NOT EXISTS stone;` to create the database.  
 
 If connection fails, check that your mysql password is set to 'mysql'  
+
+
+### If you would like to use a docker image:  
+Open docker and make sure the engine is running.  
+`docker pull mysql:8` 
+
+`docker run --name=mysql-container -e MYSQL_ROOT_PASSWORD=mysql -d mysql:8`
+
+`docker exec -it mysql-container mysql -uroot -p`
+
+When you have finished running the project, stop and remove the mysql container (can be done in the docker GUI too):  
+`docker stop mysql-container`  
+`docker rm mysql-container`  
