@@ -56,7 +56,8 @@ Open Docker and make sure the engine is running.
 
 `docker exec -it mysql-container mysql -uroot -p`  
 
-While mysql is running, type in CREATE DATABASE IF NOT EXISTS stone; to create the database.  
+While mysql is running, type in 1CREATE DATABASE IF NOT EXISTS stone;` to create the database.   
+
 
 When you have finished running the project, stop and remove the mysql container (can be done in the docker GUI too):  
 `docker stop mysql-container`  
