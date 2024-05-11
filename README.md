@@ -1,3 +1,13 @@
+## Commands to run the application
+
+Build the Spring Application
+
+`./gradlew build`
+
+Start the application:
+
+`java -jar build/libs/stone-0.0.1-SNAPSHOT.jar`
+
 ## If you would like to use your local MySQL:
 
 Java17LTS and MySQL8 are necessary to run the server
