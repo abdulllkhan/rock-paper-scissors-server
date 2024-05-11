@@ -58,4 +58,5 @@ Open docker and make sure the engine is running.
 
 When you have finished running the project, stop and remove the mysql container (can be done in the docker GUI too):  
 `docker stop mysql-container`  
+
 `docker rm mysql-container`  
