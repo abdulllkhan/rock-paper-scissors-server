@@ -40,4 +40,8 @@ Restart:
 `brew services start mysql`
 
 Login using the following command:
-`mysql -u root -p`
+`mysql -u root -p`  
+
+While mysql is running, type in `CREATE DATABASE IF NOT EXISTS stone;` to create the database.  
+
+If connection fails, check that your mysql password is set to 'mysql'  
