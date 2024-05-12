@@ -16,9 +16,13 @@ Java17LTS and MySQL8 are necessary to run the server
 Open Docker and make sure the engine is running.  
 `docker pull mysql:8` 
 
-`docker run --name=mysql-container -e MYSQL_ROOT_PASSWORD=mysql -d mysql:8`
+`docker run --name=mysql-container -e MYSQL_ROOT_PASSWORD=mysql -p 3306:3306 -d mysql:8`
+
+Run the following command to access the MySQL database:
 
 `docker exec -it mysql-container mysql -uroot -p`  
+
+Enter `mysql` when prompted to enter the password.
 
 While mysql is running, type in `CREATE DATABASE IF NOT EXISTS stone;` to create the database.   
 
