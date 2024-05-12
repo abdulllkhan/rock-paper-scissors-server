@@ -12,7 +12,10 @@ Start the application:
 
 Java17LTS and MySQL8 are necessary to run the server
 
-### If you would like to use a create a MySQL Docker image:  
+### If you would like to use a create a MySQL Docker image: 
+
+Start by updating the file application.properties. Change the following line `spring.datasource.url=jdbc:mysql://localhost:3306/stone?useSSL=false&serverTimezone=UTC` to `spring.datasource.url=jdbc:mysql://localhost:3306/stone?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC`
+
 Open Docker and make sure the engine is running.  
 `docker pull mysql:8` 
 
