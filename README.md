@@ -19,7 +19,7 @@ Start by updating the file application.properties. Change the following line `sp
 Open Docker and make sure the engine is running.  
 `docker pull mysql:8` 
 
-`docker run --name=mysql-container -e MYSQL_ROOT_PASSWORD=mysql -p 3306:3306 -d mysql:8`
+`docker run --name=mysql-container -e MYSQL_ROOT_PASSWORD=mysql -p 3306:3306 -e MYSQL_SSL_MODE=DISABLED -d mysql:8`
 
 Run the following command to access the MySQL database:
 
